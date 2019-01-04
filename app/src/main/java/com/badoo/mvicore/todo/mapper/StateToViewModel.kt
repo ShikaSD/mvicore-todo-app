@@ -5,5 +5,5 @@ import com.badoo.mvicore.todo.ui.TodoViewModel
 
 object StateToViewModel: (TodoListFeature.State) -> TodoViewModel {
     override fun invoke(state: TodoListFeature.State): TodoViewModel = 
-        TodoViewModel(state.sortedTodos)
+        TodoViewModel(state.todos)
 }

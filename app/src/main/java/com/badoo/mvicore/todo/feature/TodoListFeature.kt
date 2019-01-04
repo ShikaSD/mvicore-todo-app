@@ -30,9 +30,7 @@ class TodoListFeature(
     data class State(
         val nextId: Long = 0,
         val todos: List<TodoItem> = emptyList()
-    ) : Serializable {
-        val sortedTodos = todos.sortedWith(TodoComparator)
-    }
+    ) : Serializable
 
     object ReducerImpl : Reducer<State, Wish> {
         override fun invoke(state: State, wish: Wish): State = when (wish) {
@@ -46,17 +44,6 @@ class TodoListFeature(
                     if (it.id == wish.item.id) wish.item else it
                 }
             )
-        }
-    }
-
-    object TodoComparator : Comparator<TodoItem> {
-        override fun compare(todo1: TodoItem, todo2: TodoItem): Int {
-            val doneCompareResult = todo1.done.compareTo(todo2.done)
-            return if (doneCompareResult == 0) {
-                todo1.id.compareTo(todo2.id)
-            } else {
-                doneCompareResult
-            }
         }
     }
 

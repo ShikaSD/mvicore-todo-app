@@ -14,6 +14,7 @@ import com.badoo.mvicore.todo.R
 import com.badoo.mvicore.todo.feature.TodoListFeature
 import com.badoo.mvicore.todo.mapper.StateToViewModel
 import com.badoo.mvicore.todo.mapper.UiEventToWish
+import com.badoo.mvicore.todo.model.TodoItem
 import io.reactivex.ObservableSource
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.PublishSubject
@@ -68,6 +69,17 @@ class MainActivity(
     }
 
     override fun accept(model: TodoViewModel) {
-        adapter.items = model.todos
+        adapter.items = model.todos.sortedWith(TodoComparator)
+    }
+
+    object TodoComparator : Comparator<TodoItem> {
+        override fun compare(todo1: TodoItem, todo2: TodoItem): Int {
+            val doneCompareResult = todo1.done.compareTo(todo2.done)
+            return if (doneCompareResult == 0) {
+                todo1.id.compareTo(todo2.id)
+            } else {
+                doneCompareResult
+            }
+        }
     }
 }
