@@ -3,7 +3,6 @@ package com.badoo.mvicore.todo.feature
 import android.os.Bundle
 import com.badoo.mvicore.android.AndroidTimeCapsule
 import com.badoo.mvicore.element.Reducer
-import com.badoo.mvicore.element.TimeCapsule
 import com.badoo.mvicore.feature.ReducerFeature
 import com.badoo.mvicore.todo.feature.TodoListFeature.*
 import com.badoo.mvicore.todo.model.TodoItem
@@ -21,9 +20,9 @@ class TodoListFeature(
     }
 
     sealed class Wish {
-        data class Create(val item: TodoItem): Wish()
-        data class Delete(val item: TodoItem): Wish()
-        data class Update(val item: TodoItem): Wish()
+        data class Create(val item: TodoItem) : Wish()
+        data class Delete(val item: TodoItem) : Wish()
+        data class Update(val item: TodoItem) : Wish()
     }
 
     sealed class News
@@ -31,9 +30,11 @@ class TodoListFeature(
     data class State(
         val nextId: Long = 0,
         val todos: List<TodoItem> = emptyList()
-    ): Serializable
+    ) : Serializable {
+        val sortedTodos = todos.sortedWith(TodoComparator)
+    }
 
-    object ReducerImpl: Reducer<State, Wish> {
+    object ReducerImpl : Reducer<State, Wish> {
         override fun invoke(state: State, wish: Wish): State = when (wish) {
             is Wish.Create -> state.copy(
                 todos = state.todos + wish.item.copy(id = state.nextId),
@@ -41,8 +42,21 @@ class TodoListFeature(
             )
             is Wish.Delete -> state.copy(todos = state.todos - wish.item)
             is Wish.Update -> state.copy(
-                todos = state.todos.filterNot { it.id == wish.item.id } + wish.item
+                todos = state.todos.map {
+                    if (it.id == wish.item.id) wish.item else it
+                }
             )
+        }
+    }
+
+    object TodoComparator : Comparator<TodoItem> {
+        override fun compare(todo1: TodoItem, todo2: TodoItem): Int {
+            val doneCompareResult = todo1.done.compareTo(todo2.done)
+            return if (doneCompareResult == 0) {
+                todo1.id.compareTo(todo2.id)
+            } else {
+                doneCompareResult
+            }
         }
     }
 
