@@ -6,13 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.badoo.mvicore.todo.R
 import com.badoo.mvicore.todo.model.TodoItem
-import com.badoo.mvicore.todo.ui.TodoEvent.*
+import com.badoo.mvicore.todo.ui.TodoEvent.Deleted
+import com.badoo.mvicore.todo.ui.TodoEvent.MarkedDone
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.PublishSubject
 
